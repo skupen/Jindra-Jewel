@@ -1,9 +1,3 @@
-/*
-add event handler document.querySelectorAll("[data-jewel]") for each click event
-
-setAttribute "contentEditable=true"
-*/
-
 const editableElements = document.querySelectorAll("[data-jewel]");
 
 editableElements.forEach(element => {
@@ -12,17 +6,18 @@ editableElements.forEach(element => {
     if(sSettings !== ""){
         oSettings = JSON.parse(sSettings);
     }
+
     if(oSettings.allowAdd === true){
-        
     }
 
-    if(oSettings.editorContainer === true){
+    if(oSettings.panelContainer === true){
         element.setAttribute("x-data", "setup()");
+        element.setAttribute("x-id", "panel")
     }
 
     if(oSettings.editableItem === true){
-        element.setAttribute("x-data", "{ ...setup(), ...edit() }");
-        element.setAttribute("x-on:click", "{ openSettingsPanel() }");
+        element.setAttribute("x-data", "edit()");
+        element.setAttribute("x-on:click", "{$component('panel').openSettingsPanel(), elToEdit()}");
         element.setAttribute("x-on:click.away", "{ close() }");
     }
 
@@ -31,9 +26,10 @@ editableElements.forEach(element => {
 function edit() {
     return{
         active: false,
+        lol: "",
 
-        open() {
-            this.active = true
+        elToEdit() {   
+            this.$component("panel").$refs.panelInput.value = this.$el.innerHTML;
         },
 
         close() {
@@ -49,18 +45,11 @@ function setup() {
     return {
         isSettingsPanelOpen: false,
         openSettingsPanel() {
-            this.log()
-            this.isSettingsPanelOpen = true
-            this.log()
+            this.isSettingsPanelOpen = true;
             this.$nextTick(() => {
-                this.$refs.settingsPanel.focus()
+                this.$refs.settingsPanel.focus();
                 
             })
-        },
-
-        log() {
-            console.log(this.isSettingsPanelOpen)
-        }
-        
+        }      
     }
 }

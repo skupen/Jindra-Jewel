@@ -15,16 +15,14 @@
                 box-shadow: 0px 0px 1px black;
             }
         </style>
-        <script src="edit.js" async defer></script>
-        <script src="https://cdn.jsdelivr.net/gh/alpine-collective/alpine-magic-helpers@1.0.x/dist/index.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+            <script src="https://cdn.jsdelivr.net/gh/alpine-collective/alpine-magic-helpers@1.0.x/dist/component.min.js"></script>
     </head>
     <body>
         <div class="">
             <div class="relative px-4 py-16 mx-auto md:max-w-full lg:max-w-screen-xl md:px-8 lg:px-8 lg:py-20">    
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                     <div class="sm:col-span-2 lg:col-span-1 lg:row-span-2 mb-6 lg:mb-0 lg:pr-5 relative pt-4">
-                        <h2 class="mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl relative z-10 text-center lg:text-left" data-jewel='{"editableItem": true}' >
+                        <h2 class="mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-gray-900 sm:text-4xl relative z-10 text-center lg:text-left" data-jewel >
                             Proč je důležité vybrat <span class="inline text-yellow-600 xl:block font-extrabold">správného partnera</span>
                             <span class="lg:inline">v oblasti zabezpečení</span>
                         </h2>
@@ -40,8 +38,8 @@
                             </div>
                         </div>
                         <div>
-                            <div class="mb-3 text-xl font-bold leading-5" data-jewel='{"editableItem": true}'>Koncese a certifikace</div>
-                            <p class="mb-3 text-sm text-gray-900" data-jewel='{"editableItem": true}'>
+                            <div class="mb-3 text-xl font-bold leading-5" data-jewel>Koncese a certifikace</div>
+                            <p class="mb-3 text-sm text-gray-900" data-jewel>
                                 V oblasti profesionálního zabezpečení je podmínkou pro firmu vlastnit koncesi - povolení
                                 instalovat certifikované bezpečnostní produkty.
                                 
@@ -58,8 +56,8 @@
                             </div>
                         </div>
                         <div>
-                            <div class="mb-3 text-xl font-bold leading-5" data-jewel='{"editableItem": true}'>Komplexní vnímání bezpečnosti</div>
-                            <p class="mb-3 text-sm text-gray-900" data-jewel='{"editableItem": true}'>
+                            <div class="mb-3 text-xl font-bold leading-5" data-jewel>Komplexní vnímání bezpečnosti</div>
+                            <p class="mb-3 text-sm text-gray-900" data-jewel>
                                 Bezpečnost má pouze takovou úroveň, jakou má její nejslabší článek. Systémy je nesmírně
                                 důležité
                                 vhodně a chytře kombinovat. Například signalizace požáru je málo platná při vstupu
@@ -80,8 +78,8 @@
                             </div>
                         </div>
                         <div>
-                            <div class="mb-3 text-xl font-bold leading-5" data-jewel='{"editableItem": true}'>Lidský a slušný přístup</div>
-                            <p class="mb-3 text-sm text-gray-900" data-jewel='{"editableItem": true}'>
+                            <div class="mb-3 text-xl font-bold leading-5" data-jewel>Lidský a slušný přístup</div>
+                            <p class="mb-3 text-sm text-gray-900" data-jewel>
                                 Obzvláště kvaltní činí spolupráci přímá a otevřená komunikace, transparentnost každého kroku
                                 v
                                 procesu zabezpečení a schopnost vyjít vstříc individuálním potřebám zákazníka. Cena produktů
@@ -102,8 +100,8 @@
                             </div>
                         </div>
                         <div>
-                            <div class="mb-3 text-xl font-bold leading-5" data-jewel='{"editableItem": true}'>Využití nejmodernějších technologií</div>
-                            <p class="mb-3 text-sm text-gray-900" data-jewel='{"editableItem": true}'>
+                            <div class="mb-3 text-xl font-bold leading-5" data-jewel>Využití nejmodernějších technologií</div>
+                            <p class="mb-3 text-sm text-gray-900" data-jewel>
                                 rychlejší a přesnější detekce nebo identifikace je rozdílovým hráčem mezi úspěchem a
                                 neúspěchem
                                 systému a snižuje mimojiné četnost falešných poplachů. Stále nové funkcionality často
@@ -120,18 +118,18 @@
         </div>
         <ul data-jewel='{"allowAdd": true}'>
             <template>
-                <li data-jewel='{"editableItem": true}'>New Item</li>
+                <li data-jewel>New Item</li>
             </template>
-            <li data-jewel='{"editableItem": true}'>položka 1</li>
-            <li data-jewel='{"editableItem": true}'>položka 2</li>
-            <li data-jewel='{"editableItem": true}'>položka 3</li>
+            <li data-jewel>položka 1</li>
+            <li data-jewel>položka 2</li>
+            <li data-jewel>položka 3</li>
         </ul>
-        <div data-jewel='{"panelContainer": true}'>
+        <div x-data="setup()" x-id="panel">
             <!-- Edit Menu -->
             <div x-transition:enter="transition duration-300 ease-in-out" x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100" x-transition:leave="transition duration-300 ease-in-out"
                 x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" x-show="isSettingsPanelOpen"
-                @click="isSettingsPanelOpen = false" class="fixed inset-0 z-10 bg-yellow-600" style="opacity: 0.5;"
+                @click="{isSettingsPanelOpen = false, save()}" class="fixed inset-0 z-10 bg-yellow-600" style="opacity: 0.5;"
                 aria-hidden="true"></div>
     
             <section x-transition:enter="transition duration-300 ease-in-out transform sm:duration-500"
@@ -184,5 +182,7 @@
                 </div>
             </section>
         </div>
+        <script src="edit.js" defer></script>
+        <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
     </body>
 </html>

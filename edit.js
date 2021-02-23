@@ -8,35 +8,21 @@ editableElements.forEach(element => {
     }
 
     if(oSettings.allowAdd === true){
+        
     }
 
-    if(oSettings.panelContainer === true){
-        element.setAttribute("x-data", "setup()");
-        element.setAttribute("x-id", "panel")
-    }
-
-    if(oSettings.editableItem === true){
-        element.setAttribute("x-data", "edit()");
-        element.setAttribute("x-on:click", "{$component('panel').openSettingsPanel(), elToEdit()}");
-        element.setAttribute("x-on:click.away", "{ close() }");
-    }
-
+    element.setAttribute("x-data", "edit()");
+    element.setAttribute("data-active", "false");
+    element.setAttribute("x-on:click", "{$component('panel').openSettingsPanel(), elToEdit()}");
 });
 
 function edit() {
     return{
-        active: false,
-        lol: "",
-
-        elToEdit() {   
+        elToEdit() {
+            this.active = true;
+            this.$el.setAttribute("data-active", "true");
+            console.log(this.$el.getAttribute("data-active"))
             this.$component("panel").$refs.panelInput.value = this.$el.innerHTML;
-        },
-
-        close() {
-            if (this.active) {
-                console.log(this.$el.innerHTML);
-                this.active = false;
-            }
         }
     }
 }
@@ -44,12 +30,22 @@ function edit() {
 function setup() {   
     return {
         isSettingsPanelOpen: false,
+
         openSettingsPanel() {
             this.isSettingsPanelOpen = true;
             this.$nextTick(() => {
-                this.$refs.settingsPanel.focus();
-                
+                this.$refs.settingsPanel.focus();                
             })
-        }      
+        },
+        
+        save() {
+            for (let index = 0; index < editableElements.length; index++) {
+                    if (editableElements[index].getAttribute("data-active") == "true") {
+                        editableElements[index].innerHTML = this.$refs.panelInput.value;
+                        editableElements[index].setAttribute("data-active", "false");
+                        console.log(editableElements[index].getAttribute("data-active"));
+                    }       
+            }
+        }
     }
 }

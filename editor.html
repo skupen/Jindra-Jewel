@@ -120,6 +120,9 @@
             <template>
                 <li data-jewel>New Item</li>
             </template>
+            <template>
+                <li data-jewel>New Item</li>
+            </template>
             <li data-jewel>položka 1</li>
             <li data-jewel>položka 2</li>
             <li data-jewel>položka 3</li>
@@ -132,7 +135,7 @@
             <li data-jewel>položka 2</li>
             <li data-jewel>položka 3</li>
         </ul>
-        <div x-data="setup()" x-id="panel">
+        <div x-data="panel()" x-id="panelRef">
             <!-- Edit Menu -->
             <div x-transition:enter="transition duration-300 ease-in-out" x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100" x-transition:leave="transition duration-300 ease-in-out"

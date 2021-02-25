@@ -140,7 +140,7 @@
             <div x-transition:enter="transition duration-300 ease-in-out" x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100" x-transition:leave="transition duration-300 ease-in-out"
                 x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" x-show="isSettingsPanelOpen"
-                @click="{isSettingsPanelOpen = false, save()}" class="fixed inset-0 z-10 bg-yellow-600" style="opacity: 0.5;"
+                @click="{isSettingsPanelOpen = false, isDeleteButtonVisible = false, save()}" class="fixed inset-0 z-10 bg-yellow-600" style="opacity: 0.5;"
                 aria-hidden="true"></div>
     
             <section x-transition:enter="transition duration-300 ease-in-out transform sm:duration-500"
@@ -152,7 +152,7 @@
                 aria-labelledby="settinsPanelLabel">
                 <div class="absolute left-0 p-2 transform -translate-x-full">
                     <!-- Close button -->
-                    <button @click="isSettingsPanelOpen = false"
+                    <button @click="{isSettingsPanelOpen = false, isDeleteButtonVisible = false}"
                         class="p-2 text-white rounded-md focus:outline-none focus:ring">
                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
@@ -179,6 +179,7 @@
                     <!-- Content -->
                     <div class="flex-1 overflow-hidden hover:overflow-y-auto">
                         <!-- Theme -->
+                        <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-full" x-ref="deleteButton" x-on:click="{isSettingsPanelOpen = false, deleteEl()}" x-show="isDeleteButtonVisible">Odstranit</button>
                         <div class="p-4 space-y-4 md:p-8">
                             
                             <textarea rows="20" cols="30" value="lol" x-ref="panelInput"></textarea>

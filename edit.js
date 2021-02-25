@@ -60,6 +60,7 @@ function dataJewelInit(els) {
                 element.insertBefore(addButton, element.firstChild);
 
                 element.setAttribute("data-addButtonExists", "true");
+                element.setAttribute("x-on:click", "{$component('panelRef').isDeleteButtonVisible = true}");
             }           
         }      
     });
@@ -72,7 +73,6 @@ function edit() {
     return{
         elToEdit() {
             this.$el.setAttribute("data-active", "true");
-            console.log(this.$el.getAttribute("data-active"))
             this.$component("panelRef").$refs.panelInput.value = this.$el.innerHTML;
         }
     }
@@ -98,6 +98,8 @@ function panel() {
     return {
         isSettingsPanelOpen: false,
 
+        isDeleteButtonVisible: false,
+
         openSettingsPanel() {
             this.isSettingsPanelOpen = true;
             this.$nextTick(() => {
@@ -110,7 +112,17 @@ function panel() {
                 if (editableElements[index].getAttribute("data-active") == "true") {
                     editableElements[index].innerHTML = this.$refs.panelInput.value;
                     editableElements[index].setAttribute("data-active", "false");
-                    console.log(editableElements[index].getAttribute("data-active"));
+                }       
+            }
+        },
+
+        deleteEl() {
+            for (let index = 0; index < editableElements.length; index++) {
+                if (editableElements[index].getAttribute("data-active") == "true") {
+                    if (editableElements[index].parentNode.getAttribute("data-jewel") == '{"allowAdd": true}') {
+                        editableElements[index].remove();
+                        editableElements = document.querySelectorAll(`[data-jewel]`); 
+                    }
                 }       
             }
         }

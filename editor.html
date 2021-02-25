@@ -15,7 +15,7 @@
                 box-shadow: 0px 0px 1px black;
             }
         </style>
-            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+            <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
             <script src="https://cdn.jsdelivr.net/gh/alpine-collective/alpine-magic-helpers@1.0.x/dist/component.min.js"></script>
     </head>
     <body>
@@ -117,7 +117,7 @@
                 </div> 
             </div>
         </div>
-        <ul data-jewel='{"allowAdd": true}'>
+        <ul data-jewel='{"allowAdd": true}' data-id="ul1">
             <template>
                 <li data-jewel>New Item</li>
             </template>
@@ -128,7 +128,7 @@
             <li data-jewel>položka 2</li>
             <li data-jewel>položka 3</li>
         </ul>
-        <ul data-jewel='{"allowAdd": true}'>
+        <ul data-jewel='{"allowAdd": true}' data-id="ul2">
             <template>
                 <li data-jewel>New Item</li>
             </template>
@@ -180,7 +180,8 @@
                     <!-- Content -->
                     <div class="flex-1 overflow-hidden hover:overflow-y-auto">
                         <!-- Theme -->
-                        <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-full" x-ref="deleteButton" x-on:click="{isSettingsPanelOpen = false, deleteEl()}" x-show="isDeleteButtonVisible">Odstranit</button>
+                        <button class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-full" x-ref="deleteButton" x-on:click="{isSettingsPanelOpen = false, isDeleteButtonVisible = false, deleteEl()}" x-show="isDeleteButtonVisible" x-transition:leave="transition duration-300 ease-in-out"
+                        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-70">Odstranit</button>
                         <div class="p-4 space-y-4 md:p-8">
                             
                             <textarea rows="20" cols="30" value="lol" x-ref="panelInput"></textarea>

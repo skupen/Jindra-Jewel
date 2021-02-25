@@ -118,11 +118,9 @@ function panel() {
 
         deleteEl() {
             for (let index = 0; index < editableElements.length; index++) {
-                if (editableElements[index].getAttribute("data-active") == "true") {
                     if (editableElements[index].parentNode.getAttribute("data-jewel") == '{"allowAdd": true}') {
                         editableElements[index].remove();
                         editableElements = document.querySelectorAll(`[data-jewel]`); 
-                    }
                 }       
             }
         }

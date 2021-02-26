@@ -1,26 +1,45 @@
-// const getUsers = () => {
-//     axios.get('https://reqres.in/api/users')
-//     .then(response => {
-//      const users = response.data.data;
-//      console.log(`GET users`, users);
-//    })
-//     .catch(error => console.error(error));
-//    };
-//    getUsers();
-
 //const { default: axios } = require("axios");
+const ulData = [];
 
-function getEls() {
-    axios.get("http://dev.contactifyapp.eu:9110/api/jewel/component/lol")
+let test = 0;
+
+function getEls(id) {
+    axios.get(`http://dev.contactifyapp.eu:9110/api/jewel/component/${id}`)
     .then(response => {
-        console.log(response.data);
+        //console.log(response.data);
+        ulData.push(response.data);
+        test++
+        if (test ===  document.querySelectorAll("[data-id]").length) {
+            renderAJAXUl();
+        }
     })
 }
 
-function postULs(id, li) {
+for (let i = 0; i < document.querySelectorAll("[data-id]").length; i++) {
+    getEls(document.querySelectorAll("[data-id]")[i].getAttribute("data-id"));
+}
+
+function renderAJAXUl() {
+    ulData.forEach(element => {
+        const ulId = element.componentId;
+        const ul = document.querySelector(`[data-id=${ulId}]`);
+        const liArray = JSON.parse(element.data).content;
+        liArray.forEach(liContent => {
+            const li = document.createElement("li")
+            const content = document.createTextNode(liContent);
+            li.appendChild(content);
+            li.setAttribute("data-jewel", "");
+            ul.appendChild(li);
+        });
+    });
+    editableElements = document.querySelectorAll("[data-jewel]");
+    dataJewelInit(editableElements);
+}
+
+function postULs(id, content) {
     axios.post(
-        "http://dev.contactifyapp.eu:9110/api/jewel/component/lol", 
-        {data: JSON.stringify({ id: id, content: li})}
+        `http://dev.contactifyapp.eu:9110/api/jewel/component/${id}`, 
+        {data: JSON.stringify({content: content})}
     )
     .then(response => {
         console.log(response.data);
@@ -44,7 +63,6 @@ function ID() {
 let editableElements = document.querySelectorAll("[data-jewel]");
 
 function dataJewelInit(els) {
-    
 
     els.forEach(element => {
         var oSettings = {};
@@ -118,7 +136,8 @@ function edit() {
 function add() {
     return{
         addEl() {
-            const ul = this.$el
+            const ul = this.$el;
+
             const templateList= ul.getElementsByTagName("template");
             for (let i = 0; i < templateList.length; i++) {
                 const templateContent = templateList[i].content.cloneNode(true);
@@ -127,6 +146,12 @@ function add() {
                 editableElements = document.querySelectorAll(`[data-jewel]`);
                 dataJewelInit(editableElements); 
                 }
+            
+            let liArray = [];
+            for (let i = 0; i < ul.querySelectorAll(`[data-jewel]`).length; i++) {
+                liArray.push(ul.querySelectorAll(`[data-jewel]`)[i].innerHTML);
+            }
+            postULs(ul.getAttribute("data-id"), liArray);
         }
     }
 }
@@ -147,17 +172,40 @@ function panel() {
         save() {
             for (let index = 0; index < editableElements.length; index++) {
                 if (editableElements[index].getAttribute("data-active") == "true") {
+
                     editableElements[index].innerHTML = this.$refs.panelInput.value;
-                    //postEls(editableElements[index].getAttribute("data-id"), this.$refs.panelInput.value);
+
+                    if (editableElements[index].tagName == "LI") {
+                        const ul = document.querySelector("[data-active = true]").closest("ul");
+                        let liArray = [];
+                        for (let i = 0; i < ul.querySelectorAll(`[data-jewel]`).length; i++) {
+                            liArray.push(ul.querySelectorAll(`[data-jewel]`)[i].innerHTML);
+                        }
+                        postULs(ul.getAttribute("data-id"), liArray);
+
+                    }
+                    
                     editableElements[index].setAttribute("data-active", "false");
                 }       
-            }
+            }           
         },
 
         deleteEl() {
             for (let index = 0; index < editableElements.length; index++) {
                 if (editableElements[index].getAttribute("data-active") == "true") {
-                        editableElements[index].remove();
+
+                        if (editableElements[index].tagName == "LI") {
+                            const ul = document.querySelector("[data-active = true]").closest("ul");
+                            editableElements[index].remove();
+                            let liArray = [];
+                            for (let i = 0; i < ul.querySelectorAll(`[data-jewel]`).length; i++) {
+                                liArray.push(ul.querySelectorAll(`[data-jewel]`)[i].innerHTML);
+                            }
+                            postULs(ul.getAttribute("data-id"), liArray);
+    
+                        }else{
+                            editableElements[index].remove(); 
+                        }
                         editableElements = document.querySelectorAll(`[data-jewel]`);
                 }       
             }
@@ -165,18 +213,10 @@ function panel() {
     }
 }
 
-/*
-UL v html bude mit ID natvrdo a bude empty krome template
-
-na serveru bude schovany ID UL a k tomu vsechny LI
-
-oninit GET IDs vsech UL a jejich LI
-
-matchnout ID z GETu s ID z html
-
-render LI do prislusneho UL
-
-Pri kazdym pridani noveho itemu se POSTne updately LIs z UL s prislusnym ID
-
-
+/* 
+Problemy:
+    - To, kdy dobehnou GET requesty zjistuji asi shit zpusobem.
+    - V GET requestu mam render elementu za pomoci dat ze serveru -- je to takhle ok? ja myslim, ze ne, lol
+    - na POSTovani ul,li dat mam funkci 3x zkopirovanou, protoze je vzdycky malilinko jina. save() a add() se da ez poresit parametrem, delete moc nevim :(.
+    - Celkove tento kod zacina byt neprehledny, si myslim, a kdyz takhle budu pokracovat tak to budu mit dobry bolonsky spaghetti.
 */

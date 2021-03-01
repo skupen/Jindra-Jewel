@@ -1,16 +1,15 @@
-//const { default: axios } = require("axios");
-const ulData = [];
+const elData = [];
 
-let test = 0;
+let responseCounter = 0;
 
 function getEls(id) {
     axios.get(`http://dev.contactifyapp.eu:9110/api/jewel/component/${id}`)
     .then(response => {
         //console.log(response.data);
-        ulData.push(response.data);
-        test++
-        if (test ===  document.querySelectorAll("[data-id]").length) {
-            renderAJAXUl();
+        elData.push(response.data);
+        responseCounter++
+        if (responseCounter ===  document.querySelectorAll("[data-id]").length) {
+            renderAJAXEl();
         }
     })
 }
@@ -19,24 +18,29 @@ for (let i = 0; i < document.querySelectorAll("[data-id]").length; i++) {
     getEls(document.querySelectorAll("[data-id]")[i].getAttribute("data-id"));
 }
 
-function renderAJAXUl() {
-    ulData.forEach(element => {
-        const ulId = element.componentId;
-        const ul = document.querySelector(`[data-id=${ulId}]`);
-        const liArray = JSON.parse(element.data).content;
-        liArray.forEach(liContent => {
-            const li = document.createElement("li")
-            const content = document.createTextNode(liContent);
-            li.appendChild(content);
-            li.setAttribute("data-jewel", "");
-            ul.appendChild(li);
-        });
+function renderAJAXEl() {
+    elData.forEach(element => {
+        const elId = element.componentId;
+        const el = document.querySelector(`[data-id=${elId}]`);
+        const elContent = JSON.parse(element.data).content;
+
+        if (el.tagName == "UL") {
+            elContent.forEach(liContent => {
+                const li = document.createElement("li")
+                const content = document.createTextNode(liContent);
+                li.appendChild(content);
+                li.setAttribute("data-jewel", "");
+                el.appendChild(li);
+            });
+        }else{
+            el.innerHTML = elContent;
+        }
     });
     editableElements = document.querySelectorAll("[data-jewel]");
     dataJewelInit(editableElements);
 }
 
-function postULs(id, content) {
+function postEls(id, content) {
     axios.post(
         `http://dev.contactifyapp.eu:9110/api/jewel/component/${id}`, 
         {data: JSON.stringify({content: content})}
@@ -53,12 +57,12 @@ function setAttributes(el, attrs) {
     }
   }
 
-function ID() {
-    // Math.random should be unique because of its seeding algorithm.
-    // Convert it to base 36 (numbers + letters), and grab the first 9 characters
-    // after the decimal.
-    return '_' + Math.random().toString(36).substr(2, 9);
-  };
+// function ID() {
+//     // Math.random should be unique because of its seeding algorithm.
+//     // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+//     // after the decimal.
+//     return '_' + Math.random().toString(36).substr(2, 9);
+//   };
 
 let editableElements = document.querySelectorAll("[data-jewel]");
 
@@ -121,7 +125,7 @@ function dataJewelInit(els) {
     });
 }
 
-dataJewelInit(editableElements);
+    dataJewelInit(editableElements);
 
 
 function edit() {
@@ -151,7 +155,7 @@ function add() {
             for (let i = 0; i < ul.querySelectorAll(`[data-jewel]`).length; i++) {
                 liArray.push(ul.querySelectorAll(`[data-jewel]`)[i].innerHTML);
             }
-            postULs(ul.getAttribute("data-id"), liArray);
+            postEls(ul.getAttribute("data-id"), liArray);
         }
     }
 }
@@ -172,8 +176,15 @@ function panel() {
         save() {
             for (let index = 0; index < editableElements.length; index++) {
                 if (editableElements[index].getAttribute("data-active") == "true") {
-
-                    editableElements[index].innerHTML = this.$refs.panelInput.value;
+                    const inputTrimmed = this.$refs.panelInput.value.trim();
+                    if (!inputTrimmed.length == 0) {
+                        console.log(inputTrimmed)
+                        editableElements[index].innerHTML = this.$refs.panelInput.value;
+                    }
+                    else{
+                        editableElements[index].innerHTML = "&nbsp;";
+                    }
+                    
 
                     if (editableElements[index].tagName == "LI") {
                         const ul = document.querySelector("[data-active = true]").closest("ul");
@@ -181,10 +192,13 @@ function panel() {
                         for (let i = 0; i < ul.querySelectorAll(`[data-jewel]`).length; i++) {
                             liArray.push(ul.querySelectorAll(`[data-jewel]`)[i].innerHTML);
                         }
-                        postULs(ul.getAttribute("data-id"), liArray);
+                        postEls(ul.getAttribute("data-id"), liArray);
+                    }else{
+                        const elId = editableElements[index].getAttribute("data-id");
+                        const elContent = editableElements[index].innerHTML;
 
+                        postEls(elId, elContent);                       
                     }
-                    
                     editableElements[index].setAttribute("data-active", "false");
                 }       
             }           
@@ -201,7 +215,7 @@ function panel() {
                             for (let i = 0; i < ul.querySelectorAll(`[data-jewel]`).length; i++) {
                                 liArray.push(ul.querySelectorAll(`[data-jewel]`)[i].innerHTML);
                             }
-                            postULs(ul.getAttribute("data-id"), liArray);
+                            postEls(ul.getAttribute("data-id"), liArray);
     
                         }else{
                             editableElements[index].remove(); 

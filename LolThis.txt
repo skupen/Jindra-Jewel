@@ -1,5 +1,0 @@
-Vanilla JS + alpineJS
-
-atribut na elementu libovolnem, ktery poresi contenteditable, event handlovani
-
-data-jewel nazev krasny
